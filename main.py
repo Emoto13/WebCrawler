@@ -5,21 +5,36 @@ import validators
 from add_to_database import add_to_database
 from bootstrap import bootstrap
 from url import Url
+from database import session_scope
 
 
 def main():
     starting_url = input("Enter url: ")
     bootstrap()
+    starting_url = is_the_link_already_searched_for(starting_url)
+    bfs(starting_url)
+
+
+def bfs(starting_url):
     queue = [starting_url]
 
     while queue:
         current_url_string = queue.pop(0)
         current_url = Url(url_string=current_url_string)
-        add_to_database(current_url)
         try:
+            add_to_database(current_url)
             queue.extend(get_urls(current_url_string))
         except Exception:
             pass
+
+
+def is_the_link_already_searched_for(starting_url):
+    with session_scope() as session:
+        list_of_tuple_urls = session.query(Url).with_entities(Url.url_string).all()
+    urls = list(map(lambda url: url[0], list_of_tuple_urls))
+    if starting_url in urls:
+        return urls[-1]
+    return starting_url
 
 
 def get_urls(initial_url):
