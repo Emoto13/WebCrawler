@@ -7,7 +7,7 @@ from verification.is_url_visited import is_url_visited
 
 
 def main():
-    starting_url = input("Enter url: ")
+    starting_url = input("Enter url: ").strip()
     bootstrap()
     starting_url = is_the_link_already_searched_for(starting_url)
     bfs(starting_url)
@@ -19,14 +19,12 @@ def bfs(starting_url):
     while queue:
         current_url_string = queue.pop(0)
         try:
-            is_url_visited(current_url_string)
-            current_url = Url(url_string=current_url_string)
-            add_entry_to_db(current_url)
+            if not is_url_visited(current_url_string):
+                current_url = Url(url_string=current_url_string)
+                add_entry_to_db(current_url)
             queue.extend(get_urls_and_add_server(current_url_string))
         except Exception as e:
             print(e)
-
-
 
 
 if __name__ == '__main__':
