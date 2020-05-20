@@ -1,11 +1,9 @@
-import requests
-from bs4 import BeautifulSoup
-import validators
-
-from add_to_database import add_to_database
-from bootstrap import bootstrap
-from url import Url
-from database import session_scope
+from database_abstractions.add_entry_to_db import add_entry_to_db
+from database_abstractions.bootstrap import bootstrap
+from models.url import Url
+from utils.get_last_url_if_already_searched_for import is_the_link_already_searched_for
+from utils.get_urls import get_urls_and_add_server
+from verification.is_url_visited import is_url_visited
 
 
 def main():
@@ -20,39 +18,15 @@ def bfs(starting_url):
 
     while queue:
         current_url_string = queue.pop(0)
-        current_url = Url(url_string=current_url_string)
         try:
-            add_to_database(current_url)
-            queue.extend(get_urls(current_url_string))
-        except Exception:
-            pass
+            is_url_visited(current_url_string)
+            current_url = Url(url_string=current_url_string)
+            add_entry_to_db(current_url)
+            queue.extend(get_urls_and_add_server(current_url_string))
+        except Exception as e:
+            print(e)
 
 
-def is_the_link_already_searched_for(starting_url):
-    with session_scope() as session:
-        list_of_tuple_urls = session.query(Url).with_entities(Url.url_string).all()
-    urls = list(map(lambda url: url[0], list_of_tuple_urls))
-    if starting_url in urls:
-        return urls[-1]
-    return starting_url
-
-
-def get_urls(initial_url):
-    res = requests.get(initial_url)
-    soup = BeautifulSoup(res.content, 'html.parser')
-    urls = soup.find_all('a')
-    reference_urls = [url.get('href') for url in urls]
-    return filter_urls(reference_urls)
-
-
-def filter_urls(urls):
-    return list(filter(lambda url: filter_function(url), urls))
-
-
-def filter_function(url):
-    if url is not None and validators.url(url):
-        return True
-    return False
 
 
 if __name__ == '__main__':
