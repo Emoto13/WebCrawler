@@ -1,4 +1,4 @@
-from database import engine, Base
+from database_abstractions.database import engine, Base
 
 
 def bootstrap():
