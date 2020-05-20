@@ -1,4 +1,4 @@
-#### **WebCrawler project**
+# **WebCrawler project**
 
 Simple python program, which crawls the web and records every unique visited url.
 
