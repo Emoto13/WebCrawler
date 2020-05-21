@@ -6,14 +6,26 @@ from models.domain import Domain
 
 
 def main():
-    choose_option = input("Choose metrics to display\n"
-                          "Option last (hour, week, month): ")
     options = {
         'hour': timedelta(hours=1),
         'week': timedelta(weeks=7),
         'month': timedelta(days=30)
     }
+    choose_option = handle_command(options)
     time_chosen = datetime.now() - options[choose_option]
+    create_plot(choose_option, time_chosen)
+
+
+def handle_command(options):
+    command = input("Choose metrics to display\n"
+                    "Option last (hour, week, month): ")
+    options_list = options.keys()
+    while command not in options_list:
+        command = input("Try another command: ")
+    return command
+
+
+def create_plot(choose_option, time_chosen):
     with session_scope() as session:
         domain_names_raw = session.query(Domain) \
             .filter(Domain.visited_at >= time_chosen) \
