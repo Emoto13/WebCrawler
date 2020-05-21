@@ -1,17 +1,13 @@
 #!/bin/bash
 
-#echo Choose on how many threads you want your program to run:
-# shellcheck disable=SC2162
-#read threads
-
-# shellcheck disable=SC2004
-#for ((i=0;i<$threads;i++))
-#do
+# run web crawler with more threads
 chmod +x webcrawler_with_threads.py
 python3 webcrawler_with_threads.py &>output.txt 2>error.txt
 
+# kill connections if any left
 fuser -k webcrawler_with_threads.py
 fuser -k sites.db
 
+# delete output files
 rm output.txt
 rm error.txt
