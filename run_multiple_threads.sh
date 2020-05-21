@@ -10,8 +10,6 @@
 chmod +x webcrawler_with_threads.py
 python3 webcrawler_with_threads.py
 
-echo "Press enter to kill"
-read kill
 
 fuser -k webcrawler_with_threads.py
 fuser -k sites.db
