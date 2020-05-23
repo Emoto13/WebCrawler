@@ -1,3 +1,4 @@
+import threading
 from contextlib import contextmanager
 
 from sqlalchemy import create_engine
@@ -7,11 +8,13 @@ from sqlalchemy.orm import sessionmaker
 engine = create_engine('sqlite:///sites.db')
 Base = declarative_base()
 Session = sessionmaker(bind=engine, expire_on_commit=False)
+lock = threading.Lock()
 
 
 @contextmanager
 def session_scope():
     """Provide a transactional scope around a series of operations."""
+    lock.acquire()
     session = Session()
     try:
         yield session
@@ -21,3 +24,4 @@ def session_scope():
         raise
     finally:
         session.close()
+        lock.release()
