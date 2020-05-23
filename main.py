@@ -31,11 +31,8 @@ def bfs(starting_url):
 
             queue.extend(get_urls_and_add_server(url_string))
         except Exception as e:
-            print(e)
+            pass
 
 
 if __name__ == '__main__':
     main()
-
-# dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-# print("date and time =", dt_string)
