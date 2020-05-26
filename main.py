@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from database_abstractions.add_entry_to_db import add_entry_to_db
 from database_abstractions.bootstrap import bootstrap
 from models.domain import create_domain
